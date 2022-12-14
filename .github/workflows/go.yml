@@ -39,6 +39,6 @@ jobs:
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - run: az group create --location westeurope --name go-azure-function-prod-rg
     - run: az storage account create --name goazurefunctionstprod --location westeurope --resource-group go-azure-function-prod-rg --sku Standard_LRS
-    - run: az functionapp create --name goazurefunctionfaprod --storage-account goazurefunctionstprod --consumption-plan-location westeurope --resource-group go-azure-function-prod-rg --functions-version 4 --os-type Linux --assign-identity --https-only true --runtime custom --runtime-version "~4"
+    - run: az functionapp create --name goazurefunctionfaprod --storage-account goazurefunctionstprod --consumption-plan-location westeurope --resource-group go-azure-function-prod-rg --functions-version 4 --os-type Linux --assign-identity --https-only true --runtime custom
     - run: az logout
       if: ${{ always() }}
