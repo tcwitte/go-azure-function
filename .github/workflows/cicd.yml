@@ -1,10 +1,6 @@
-# This workflow will build a golang project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
-
-# For connecting with Azure, first create a service principal: https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux
-# appId = clientId = 07ce1783-2e92-4d86-bfb5-4c4d564991c4
-# subscriptionId = d5689b94-e56d-4ef0-aea3-138fe074a835
-# tenantId = 7ffa5f51-c9db-4f5d-b75c-ab79f72f8aaf
+# Basic CI/CD workflow that builds and tests a Go function, and then deploys it to Azure.
+#
+# First create a service principal in Azure: https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux
 
 on: push
 
