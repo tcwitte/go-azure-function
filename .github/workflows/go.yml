@@ -48,7 +48,7 @@ jobs:
     - uses: actions/download-artifact@v3
     - uses: Azure/functions-action@v1
       with:
-        app-name: $FunctionApp
+        app-name: ${{ env.FunctionApp }}
         package: artifact
     - run: az logout
       if: ${{ always() }}
