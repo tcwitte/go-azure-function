@@ -25,6 +25,7 @@ jobs:
           go-azure-function
           HttpExample/*
   test:
+    needs: build
     environment: test
     runs-on: ubuntu-latest
     env:
