@@ -47,5 +47,6 @@ jobs:
       with:
         app-name: ${{ env.FunctionApp }}
         package: artifact
+    - run: wget https://$FunctionApp.azurewebsites.net/api/HttpExample?name=GitHub
     - run: az logout
       if: ${{ always() }}
