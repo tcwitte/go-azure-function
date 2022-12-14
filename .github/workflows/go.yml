@@ -38,5 +38,5 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
     - run: az group create --location westeurope --name go-azure-function-rg
-    - run: az functionapp plan create --location westeurope --name goazurefunctionplanprod --resource-group go-azure-function-rg --sku y1 --is-linux true
+    - run: az functionapp plan create --location westeurope --name goazurefunctionplanprod --resource-group go-azure-function-rg --sku Y1 --is-linux true
     - run: az logout
