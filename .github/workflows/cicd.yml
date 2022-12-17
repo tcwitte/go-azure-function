@@ -1,4 +1,6 @@
 # Basic CI/CD workflow that builds and tests a Go function, and then deploys it to Azure.
+# Pull requests result in a deployed application that is removed when the pull request is
+# closed.
 #
 # First create a service principal in Azure: https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux
 
