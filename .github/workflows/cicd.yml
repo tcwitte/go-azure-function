@@ -1,8 +1,18 @@
 # Basic CI/CD workflow that builds and tests a Go function, and then deploys it to Azure.
+# Pull requests result in a deployed application that is removed when the pull request is
+# closed.
 #
 # First create a service principal in Azure: https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure?tabs=azure-cli%2Clinux
 
-on: push
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - closed
+  push:
+    branches:
+      - main
 
 permissions:
   id-token: write
@@ -10,6 +20,9 @@ permissions:
 
 jobs:
   build:
+    if: >-
+      github.event.push ||
+      github.event.pull_request.state == 'open'
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -29,10 +42,52 @@ jobs:
     environment: test
     runs-on: ubuntu-latest
     env:
-      ResourceGroup: go-azure-function-test-rg
+      ResourceGroup: go-azure-function-test${{ github.event.pull_request.number }}-rg
       Location: westeurope
-      StorageAccount: goazurefunctiontestsa
-      FunctionApp: goazurefunctiontestfa
+      StorageAccount: goazurefunctiontest${{ github.event.pull_request.number }}sa
+      FunctionApp: goazurefunctiontest${{ github.event.pull_request.number }}fa
+    steps:
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - run: az group create --location $Location --name $ResourceGroup
+    - run: az storage account create --name $StorageAccount --location $Location --resource-group $ResourceGroup --sku Standard_LRS
+    - run: az functionapp create --name $FunctionApp --storage-account $StorageAccount --consumption-plan-location $Location --resource-group $ResourceGroup --functions-version 4 --os-type Linux --assign-identity --https-only true --runtime custom
+    - uses: actions/download-artifact@v3
+    - uses: Azure/functions-action@v1
+      with:
+        app-name: ${{ env.FunctionApp }}
+        package: artifact
+    - run: wget https://$FunctionApp.azurewebsites.net/api/HttpExample?name=GitHub
+    - run: az logout
+      if: ${{ always() }}
+  cleanup:
+    if: github.event.pull_request.state == 'closed'
+    environment: test
+    runs-on: ubuntu-latest
+    env:
+      ResourceGroup: go-azure-function-test${{ github.event.pull_request.number }}-rg
+    steps:
+    - uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    - run: az group delete --yes --name $ResourceGroup
+    - run: az logout
+      if: ${{ always() }}
+  production:
+    if: github.event.push
+    needs: test
+    environment: production
+    runs-on: ubuntu-latest
+    env:
+      ResourceGroup: go-azure-function-prod-rg
+      Location: westeurope
+      StorageAccount: goazurefunctionprodsa
+      FunctionApp: goazurefunctionprodfa
     steps:
     - uses: azure/login@v1
       with:
