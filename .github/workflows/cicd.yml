@@ -78,6 +78,7 @@ jobs:
     - run: az logout
       if: ${{ always() }}
   production:
+    if: github.event.push
     needs: test
     environment: production
     runs-on: ubuntu-latest
