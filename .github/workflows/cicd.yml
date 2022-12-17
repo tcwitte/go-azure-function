@@ -21,7 +21,7 @@ permissions:
 jobs:
   build:
     if: >-
-      github.event.push ||
+      github.event_name == 'push' ||
       github.event.pull_request.state == 'open'
     runs-on: ubuntu-latest
     steps:
@@ -79,7 +79,7 @@ jobs:
     - run: az logout
       if: ${{ always() }}
   production:
-    if: github.event.push
+    if: github.event_name == 'push'
     needs: test
     environment: production
     runs-on: ubuntu-latest
