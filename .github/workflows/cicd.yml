@@ -60,7 +60,11 @@ jobs:
       with:
         app-name: ${{ env.FunctionApp }}
         package: artifact
-    - run: wget https://$FunctionApp.azurewebsites.net/api/HttpExample?name=GitHub
+    - uses: matt-ball/newman-action@master
+      with:
+        collection: postman_collection.json
+        environment: postman_environment.json
+        envVar: '[{"key": "url", "value": "https://${{ env.FunctionApp }}.azurewebsites.net"}]'
     - run: az logout
       if: ${{ always() }}
   cleanup:
