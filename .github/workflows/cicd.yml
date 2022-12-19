@@ -62,9 +62,9 @@ jobs:
         package: artifact
     - uses: matt-ball/newman-action@master
       with:
-        collection: postman_collection.json
-        environment: postman_environment.json
-        envVar: '[{"key": "url", "value": "https://${{ env.FunctionApp }}.azurewebsites.net"}]'
+        collection: goazurefunction.postman_collection.json
+        environment: test.postman_environment.json
+        envVar: '[{"key": "functionapp", "value": "${{ env.FunctionApp }}"}]'
     - run: az logout
       if: ${{ always() }}
   cleanup:
