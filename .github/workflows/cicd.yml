@@ -37,7 +37,7 @@ jobs:
           host.json
           go-azure-function
           HttpExample/*
-  test:
+  testdeploy:
     needs: build
     environment: test
     runs-on: ubuntu-latest
@@ -60,13 +60,20 @@ jobs:
       with:
         app-name: ${{ env.FunctionApp }}
         package: artifact
+    - run: az logout
+      if: ${{ always() }}
+  test:
+    needs: testdeploy
+    runs-on: ubuntu-latest
+    env:
+      FunctionApp: goazurefunctiontest${{ github.event.pull_request.number }}fa
+    steps:
+    - uses: actions/checkout@v3
     - uses: matt-ball/newman-action@master
       with:
         collection: goazurefunction.postman_collection.json
         environment: test.postman_environment.json
         envVar: '[{"key": "functionapp", "value": "${{ env.FunctionApp }}"}]'
-    - run: az logout
-      if: ${{ always() }}
   cleanup:
     if: github.event.pull_request.state == 'closed'
     environment: test
