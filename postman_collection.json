@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "HttpExample GET",
+			"name": "https://{{functionapp}}.azurewebsites.net/api/HttpExample?name=GitHub",
 			"event": [
 				{
 					"listen": "test",
