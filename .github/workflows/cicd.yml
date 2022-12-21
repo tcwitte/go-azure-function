@@ -46,6 +46,7 @@ jobs:
       Location: westeurope
       StorageAccount: goazurefunctiontest${{ github.event.pull_request.number }}sa
       FunctionApp: goazurefunctiontest${{ github.event.pull_request.number }}fa
+      CosmosAccount: goazurefunctiontest${{ github.event.pull_request.number }}cosmos
     steps:
     - uses: azure/login@v1
       with:
@@ -55,6 +56,7 @@ jobs:
     - run: az group create --location $Location --name $ResourceGroup
     - run: az storage account create --name $StorageAccount --location $Location --resource-group $ResourceGroup --sku Standard_LRS
     - run: az functionapp create --name $FunctionApp --storage-account $StorageAccount --consumption-plan-location $Location --resource-group $ResourceGroup --functions-version 4 --os-type Linux --assign-identity --https-only true --runtime custom
+    - run: az cosmosdb create --kind GlobalDocumentDB --locations regionName=$Location failoverPriority=0 isZoneRedundant=False --resource-group $ResourceGroup --name $CosmosAccount --capabilities EnableServerless --backup-policy-type Continuous
     - uses: actions/download-artifact@v3
     - uses: Azure/functions-action@v1
       with:
@@ -99,6 +101,7 @@ jobs:
       Location: westeurope
       StorageAccount: goazurefunctionprodsa
       FunctionApp: goazurefunctionprodfa
+      CosmosAccount: goazurefunctionprodcosmos
     steps:
     - uses: azure/login@v1
       with:
@@ -108,6 +111,7 @@ jobs:
     - run: az group create --location $Location --name $ResourceGroup
     - run: az storage account create --name $StorageAccount --location $Location --resource-group $ResourceGroup --sku Standard_LRS
     - run: az functionapp create --name $FunctionApp --storage-account $StorageAccount --consumption-plan-location $Location --resource-group $ResourceGroup --functions-version 4 --os-type Linux --assign-identity --https-only true --runtime custom
+    - run: az cosmosdb create --kind GlobalDocumentDB --locations regionName=$Location failoverPriority=0 isZoneRedundant=False --resource-group $ResourceGroup --name $CosmosAccount --capabilities EnableServerless --backup-policy-type Continuous
     - uses: actions/download-artifact@v3
     - uses: Azure/functions-action@v1
       with:
