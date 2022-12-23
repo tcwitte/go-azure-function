@@ -9,9 +9,26 @@ import (
 	"time"
 
 	"github.com/microsoft/ApplicationInsights-Go/appinsights"
+	"github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos"
+	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 )
 
 var telemetryClient = appinsights.NewTelemetryClient(os.Getenv("APPINSIGHTS_INSTRUMENTATIONKEY"))
+
+func init() {
+	cred, err := azidentity.NewDefaultAzureCredential(nil)
+	if err != nil {
+		panic(err)
+	}	
+	// Create a CosmosDB client
+	cosmosUri := fmt.Sprintf("https://%s.documents.azure.com:443/", os.Getenv("CosmosAccount"))
+	client, err := azcosmos.NewClient(cosmosUri, cred, nil)
+	if err != nil {
+		log.Fatal("Failed to create Azure Cosmos DB client: ", err)
+	}
+
+	fmt.Printf("client: %v\n", client)
+}
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	defer func(start time.Time) {
