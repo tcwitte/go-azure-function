@@ -2,32 +2,32 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/microsoft/ApplicationInsights-Go/appinsights"
-	"github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	"github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos"
+	"github.com/microsoft/ApplicationInsights-Go/appinsights"
 )
 
 var telemetryClient = appinsights.NewTelemetryClient(os.Getenv("APPINSIGHTS_INSTRUMENTATIONKEY"))
+var cosmosClient *azcosmos.Client
 
 func init() {
 	cred, err := azidentity.NewDefaultAzureCredential(nil)
 	if err != nil {
 		panic(err)
-	}	
+	}
 	// Create a CosmosDB client
 	cosmosUri := fmt.Sprintf("https://%s.documents.azure.com:443/", os.Getenv("CosmosAccount"))
-	client, err := azcosmos.NewClient(cosmosUri, cred, nil)
+	cosmosClient, err = azcosmos.NewClient(cosmosUri, cred, nil)
 	if err != nil {
 		log.Fatal("Failed to create Azure Cosmos DB client: ", err)
 	}
-
-	fmt.Printf("client: %v\n", client)
 }
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
@@ -44,13 +44,22 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-    defer appinsights.TrackPanic(telemetryClient, false)
+	defer appinsights.TrackPanic(telemetryClient, false)
+	createDatabase("myfirstdatabase")
 
-    listenAddr := ":8080"
+	listenAddr := ":8080"
 	if val, ok := os.LookupEnv("FUNCTIONS_CUSTOMHANDLER_PORT"); ok {
 		listenAddr = ":" + val
 	}
 	http.HandleFunc("/api/HttpExample", helloHandler)
 	log.Printf("About to listen on %s. Go to https://127.0.0.1%s/", listenAddr, listenAddr)
 	log.Fatal(http.ListenAndServe(listenAddr, nil))
+}
+
+func createDatabase(databaseName string) error {
+	databaseProperties := azcosmos.DatabaseProperties{ID: databaseName}
+
+	ctx := context.TODO()
+	_, err := cosmosClient.CreateDatabase(ctx, databaseProperties, nil)
+	return err
 }
