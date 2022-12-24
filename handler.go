@@ -45,7 +45,9 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	defer appinsights.TrackPanic(telemetryClient, false)
-	createDatabase("myfirstdatabase")
+	if err := createDatabase("myfirstdatabase"); err != nil {
+		panic(err)
+	}
 
 	listenAddr := ":8080"
 	if val, ok := os.LookupEnv("FUNCTIONS_CUSTOMHANDLER_PORT"); ok {
