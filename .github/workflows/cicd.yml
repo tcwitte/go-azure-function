@@ -57,7 +57,7 @@ jobs:
     - run: az storage account create --name $StorageAccount --location $Location --resource-group $ResourceGroup --sku Standard_LRS
     - run: az functionapp create --name $FunctionApp --storage-account $StorageAccount --consumption-plan-location $Location --resource-group $ResourceGroup --functions-version 4 --os-type Linux --assign-identity --https-only true --runtime custom
     - run: az cosmosdb create --kind GlobalDocumentDB --locations regionName=$Location failoverPriority=0 isZoneRedundant=False --resource-group $ResourceGroup --name $CosmosAccount --capabilities EnableServerless --backup-policy-type Continuous
-    - run: az cosmosdb sql role assignment create --account-name $CosmosAccount --resource-group $ResourceGroup --scope "/" --role-definition-name "Owner" --principal-id $(az functionapp identity show --name $FunctionApp --resource-group $ResourceGroup --query principalId)
+    - run: az cosmosdb sql role assignment create --account-name $CosmosAccount --resource-group $ResourceGroup --scope "/" --role-definition-name "Contributor" --principal-id $(az functionapp identity show --name $FunctionApp --resource-group $ResourceGroup --query principalId)
     - run: az functionapp config appsettings set --name $FunctionApp --resource-group $ResourceGroup --settings "CosmosAccount=$CosmosAccount" --query "[name]"
     - uses: actions/download-artifact@v3
     - uses: Azure/functions-action@v1
