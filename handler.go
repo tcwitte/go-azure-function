@@ -2,6 +2,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -10,6 +11,12 @@ import (
 
 	"github.com/microsoft/ApplicationInsights-Go/appinsights"
 )
+
+type InvokeResponse struct {
+	Outputs     map[string]interface{}
+	Logs        []string
+	ReturnValue interface{}
+}
 
 var telemetryClient = appinsights.NewTelemetryClient(os.Getenv("APPINSIGHTS_INSTRUMENTATIONKEY"))
 
@@ -23,13 +30,27 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 	if name != "" {
 		message = fmt.Sprintf("Hello, %s. This HTTP triggered function executed successfully.\n", name)
 	}
-	fmt.Fprint(w, message)
+
+	returnValue := 100
+	outputs := make(map[string]interface{})
+	outputs["output1"] = message
+
+	invokeResponse := InvokeResponse{outputs, []string{"test log1", "test log2"}, returnValue}
+
+	js, err := json.Marshal(invokeResponse)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(js)
 }
 
 func main() {
-    defer appinsights.TrackPanic(telemetryClient, false)
+	defer appinsights.TrackPanic(telemetryClient, false)
 
-    listenAddr := ":8080"
+	listenAddr := ":8080"
 	if val, ok := os.LookupEnv("FUNCTIONS_CUSTOMHANDLER_PORT"); ok {
 		listenAddr = ":" + val
 	}

@@ -7,10 +7,18 @@
 		"name": "req",
 		"authLevel": "anonymous"
 	},
-	{
-		"type": "http",
-		"direction": "out",
-		"name": "$return"
-	}
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "name": "$return",
+      "type": "CosmosDBOutput",
+      "direction": "out",
+      "databaseName": "mydatabase",
+			"collectionName": "mycollection",
+      "connectionStringSetting": "CosmosDBConnectionString"      
+    }
 ]
 }
