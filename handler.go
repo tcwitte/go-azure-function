@@ -31,11 +31,22 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		message = fmt.Sprintf("Hello, %s. This HTTP triggered function executed successfully.\n", name)
 	}
 
-	returnValue := 100
 	outputs := make(map[string]interface{})
-	outputs["output1"] = message
+	outputs["myMessage"] = message
+	outputs["object"] = map[string]interface{}{
+		"somekey1": "value1",
+		"somekey2": "value2",
+	}
+	headers := make(map[string]interface{})
+	headers["header1"] = "header1Val"
+	headers["header2"] = "header2Val"
 
-	invokeResponse := InvokeResponse{outputs, []string{"test log1", "test log2"}, returnValue}
+	res := make(map[string]interface{})
+	res["statusCode"] = "201"
+	res["body"] = "my world"
+	res["headers"] = headers
+	outputs["res"] = res
+	invokeResponse := InvokeResponse{outputs, []string{"test log1", "test log2"}, "Hello,World"}
 
 	js, err := json.Marshal(invokeResponse)
 	if err != nil {
