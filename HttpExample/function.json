@@ -14,7 +14,7 @@
     },
     {
       "name": "$return",
-      "type": "CosmosDBOutput",
+      "type": "cosmosDB",
       "direction": "out",
       "databaseName": "mydatabase",
 			"collectionName": "mycollection",
