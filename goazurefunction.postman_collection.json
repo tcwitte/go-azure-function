@@ -28,13 +28,13 @@
 			"request": {
 				"method": "POST",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "Hello World"
+				},
 				"url": {
-					"raw": "https://{{functionapp}}.azurewebsites.net/api/HttpExample?name=GitHub",
+					"raw": "https://{{functionapp}}.azurewebsites.net/api/HttpExample",
 					"protocol": "https",
-					"body": {
-						"mode": "raw",
-						"raw": "Hello World"
-					},
 					"host": [
 						"{{functionapp}}",
 						"azurewebsites",
