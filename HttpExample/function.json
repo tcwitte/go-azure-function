@@ -3,7 +3,7 @@
 	{
 		"type": "httpTrigger",
 		"direction": "in",
-		"methods": ["GET"],
+		"methods": ["POST"],
 		"name": "req",
 		"authLevel": "anonymous"
 	},

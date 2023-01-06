@@ -21,6 +21,7 @@ permissions:
 env:
   CosmosDatabase: mydatabase
   CosmosCollection: mycollection
+  Location: westeurope
 
 jobs:
   build:
@@ -47,7 +48,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ResourceGroup: go-azure-function-test${{ github.event.pull_request.number }}-rg
-      Location: westeurope
       StorageAccount: goazurefunctiontest${{ github.event.pull_request.number }}sa
       FunctionApp: goazurefunctiontest${{ github.event.pull_request.number }}fa
       CosmosAccount: goazurefunctiontest${{ github.event.pull_request.number }}cosmos
@@ -106,7 +106,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ResourceGroup: go-azure-function-prod-rg
-      Location: westeurope
       StorageAccount: goazurefunctionprodsa
       FunctionApp: goazurefunctionprodfa
       CosmosAccount: goazurefunctionprodcosmos
@@ -125,6 +124,6 @@ jobs:
       with:
         app-name: ${{ env.FunctionApp }}
         package: artifact
-    - run: wget https://$FunctionApp.azurewebsites.net/api/HttpExample?name=GitHub
+    - run: wget --method POST https://$FunctionApp.azurewebsites.net/api/HttpExample?name=GitHub
     - run: az logout
       if: ${{ always() }}
