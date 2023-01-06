@@ -13,7 +13,7 @@
       "name": "res"
     },
     {
-      "name": "$return",
+      "name": "document",
       "type": "cosmosDB",
       "direction": "out",
       "databaseName": "mydatabase",

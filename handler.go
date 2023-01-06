@@ -33,9 +33,10 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 	outputs := make(map[string]interface{})
 	outputs["myMessage"] = message
-	outputs["object"] = map[string]interface{}{
+	outputs["document"] = map[string]interface{}{
 		"somekey1": "value1",
 		"somekey2": "value2",
+		"message": message,
 	}
 	headers := make(map[string]interface{})
 	headers["header1"] = "header1Val"
