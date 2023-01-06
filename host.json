@@ -8,7 +8,7 @@
 		"description": {
 			"defaultExecutablePath": "go-azure-function"
 		},
-		"enableForwardingHttpRequest": true
+		"enableForwardingHttpRequest": false
 	},
 	"extensions": {
 		"cosmosDB": {
