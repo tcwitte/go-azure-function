@@ -44,7 +44,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 	res := make(map[string]interface{})
 	res["statusCode"] = "201"
-	res["body"] = "my world"
+	res["body"] = message
 	res["headers"] = headers
 	outputs["res"] = res
 	invokeResponse := InvokeResponse{outputs, []string{"test log1", "test log2"}, "Hello,World"}
