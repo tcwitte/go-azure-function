@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "api/HttpExample?name=GitHub",
+			"name": "api/HttpExample",
 			"event": [
 				{
 					"listen": "test",
@@ -18,7 +18,7 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Body matches string\", function () {\r",
-							"    pm.expect(pm.response.text()).to.include(\"Hello, GitHub. This HTTP triggered function executed successfully.\");\r",
+							"    pm.expect(pm.response.text()).to.include(\"Hello World\");\r",
 							"});"
 						],
 						"type": "text/javascript"
@@ -31,6 +31,10 @@
 				"url": {
 					"raw": "https://{{functionapp}}.azurewebsites.net/api/HttpExample?name=GitHub",
 					"protocol": "https",
+					"body": {
+						"mode": "raw",
+						"raw": "Hello World"
+					},
 					"host": [
 						"{{functionapp}}",
 						"azurewebsites",
@@ -39,12 +43,6 @@
 					"path": [
 						"api",
 						"HttpExample"
-					],
-					"query": [
-						{
-							"key": "name",
-							"value": "GitHub"
-						}
 					]
 				}
 			},

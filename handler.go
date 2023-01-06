@@ -12,6 +12,11 @@ import (
 	"github.com/microsoft/ApplicationInsights-Go/appinsights"
 )
 
+type InvokeRequest struct {
+	Data     map[string]interface{}
+	Metadata map[string]interface{}
+}
+
 type InvokeResponse struct {
 	Outputs     map[string]interface{}
 	Logs        []string
@@ -25,18 +30,24 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		telemetryClient.TrackRequest(r.Method, r.RequestURI, time.Since(start), "200")
 	}(time.Now())
 
-	message := "This HTTP triggered function executed successfully. Pass a name in the query string for a personalized response.\n"
-	name := r.URL.Query().Get("name")
-	if name != "" {
-		message = fmt.Sprintf("Hello, %s. This HTTP triggered function executed successfully.\n", name)
+	var invokeReq InvokeRequest
+	d := json.NewDecoder(r.Body)
+	decodeErr := d.Decode(&invokeReq)
+	if decodeErr != nil {
+		http.Error(w, decodeErr.Error(), http.StatusBadRequest)
+		return
 	}
+	fmt.Println("The JSON data is:invokeReq metadata......")
+	fmt.Println(invokeReq.Metadata)
+	fmt.Println("The JSON data is:invokeReq data......")
+	fmt.Println(invokeReq.Data)
 
 	outputs := make(map[string]interface{})
-	outputs["myMessage"] = message
 	outputs["document"] = map[string]interface{}{
 		"somekey1": "value1",
 		"somekey2": "value2",
-		"message": message,
+		"data": invokeReq.Data,
+		"azureFunctionsInvocationId": r.Header.Get("X-Azure-Functions-InvocationId"),
 	}
 	headers := make(map[string]interface{})
 	headers["header1"] = "header1Val"
@@ -44,7 +55,7 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 	res := make(map[string]interface{})
 	res["statusCode"] = "201"
-	res["body"] = message
+	res["body"] = invokeReq.Data
 	res["headers"] = headers
 	outputs["res"] = res
 	invokeResponse := InvokeResponse{outputs, []string{"test log1", "test log2"}, "Hello,World"}
