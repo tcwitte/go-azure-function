@@ -8,6 +8,15 @@
 		"description": {
 			"defaultExecutablePath": "go-azure-function"
 		},
-		"enableForwardingHttpRequest": true
-	}
+		"enableForwardingHttpRequest": false
+	},
+	"extensions": {
+		"cosmosDB": {
+				"connectionMode": "Gateway",
+				"protocol": "Https",
+				"leaseOptions": {
+						"leasePrefix": "prefix1"
+				}
+		}
+  }
 }
