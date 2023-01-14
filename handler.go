@@ -37,21 +37,14 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, decodeErr.Error(), http.StatusBadRequest)
 		return
 	}
-	fmt.Println("The JSON data is:invokeReq metadata......")
-	fmt.Println(invokeReq.Metadata)
-	fmt.Println("The JSON data is:invokeReq data......")
-	fmt.Println(invokeReq.Data)
 
 	outputs := make(map[string]interface{})
 	outputs["document"] = map[string]interface{}{
-		"somekey1": "value1",
-		"somekey2": "value2",
 		"data": invokeReq.Data,
 		"azureFunctionsInvocationId": r.Header.Get("X-Azure-Functions-InvocationId"),
 	}
 	headers := make(map[string]interface{})
-	headers["header1"] = "header1Val"
-	headers["header2"] = "header2Val"
+	headers["Content-Type"] = "text/plain"
 
 	res := make(map[string]interface{})
 	res["statusCode"] = "201"

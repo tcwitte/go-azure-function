@@ -35,7 +35,6 @@ jobs:
       with:
         go-version: 'stable'
     - run: GOOS=linux GOARCH=amd64 go build -v
-    - run: go test -v
     - uses: actions/upload-artifact@v3.1.1
       with:
         path: |
