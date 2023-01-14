@@ -3,14 +3,22 @@
 	{
 		"type": "httpTrigger",
 		"direction": "in",
-		"methods": ["GET"],
+		"methods": ["POST"],
 		"name": "req",
 		"authLevel": "anonymous"
 	},
-	{
-		"type": "http",
-		"direction": "out",
-		"name": "$return"
-	}
+    {
+      "type": "http",
+      "direction": "out",
+      "name": "res"
+    },
+    {
+      "name": "document",
+      "type": "cosmosDB",
+      "direction": "out",
+      "databaseName": "mydatabase",
+			"collectionName": "mycollection",
+      "connectionStringSetting": "CosmosDBConnectionString"      
+    }
 ]
 }

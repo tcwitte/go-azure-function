@@ -18,6 +18,11 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  CosmosDatabase: mydatabase
+  CosmosCollection: mycollection
+  Location: westeurope
+
 jobs:
   build:
     if: >-
@@ -30,7 +35,6 @@ jobs:
       with:
         go-version: 'stable'
     - run: GOOS=linux GOARCH=amd64 go build -v
-    - run: go test -v
     - uses: actions/upload-artifact@v3.1.1
       with:
         path: |
@@ -43,9 +47,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ResourceGroup: go-azure-function-test${{ github.event.pull_request.number }}-rg
-      Location: westeurope
       StorageAccount: goazurefunctiontest${{ github.event.pull_request.number }}sa
       FunctionApp: goazurefunctiontest${{ github.event.pull_request.number }}fa
+      CosmosAccount: goazurefunctiontest${{ github.event.pull_request.number }}cosmos
     steps:
     - uses: azure/login@v1
       with:
@@ -55,6 +59,11 @@ jobs:
     - run: az group create --location $Location --name $ResourceGroup
     - run: az storage account create --name $StorageAccount --location $Location --resource-group $ResourceGroup --sku Standard_LRS
     - run: az functionapp create --name $FunctionApp --storage-account $StorageAccount --consumption-plan-location $Location --resource-group $ResourceGroup --functions-version 4 --os-type Linux --assign-identity --https-only true --runtime custom
+    - run: az cosmosdb create --kind GlobalDocumentDB --locations regionName=$Location failoverPriority=0 isZoneRedundant=False --resource-group $ResourceGroup --name $CosmosAccount --capabilities EnableServerless --backup-policy-type Continuous
+    - run: az cosmosdb sql database create --account-name $CosmosAccount --name $CosmosDatabase --resource-group $ResourceGroup
+    - run: az cosmosdb sql container create --account-name $CosmosAccount --database-name $CosmosDatabase --name $CosmosCollection --partition-key-path "/id" --resource-group $ResourceGroup
+    #- run: az cosmosdb sql role assignment create --account-name $CosmosAccount --resource-group $ResourceGroup --scope "/" --role-definition-name "Contributor" --principal-id $(az functionapp identity show --name $FunctionApp --resource-group $ResourceGroup --query principalId)
+    - run: az functionapp config appsettings set --name $FunctionApp --resource-group $ResourceGroup --settings "CosmosDBConnectionString=$(az cosmosdb keys list --type connection-strings --name $CosmosAccount --resource-group $ResourceGroup --query connectionStrings[0].connectionString --output tsv)" --query "[name]"
     - uses: actions/download-artifact@v3
     - uses: Azure/functions-action@v1
       with:
@@ -96,9 +105,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ResourceGroup: go-azure-function-prod-rg
-      Location: westeurope
       StorageAccount: goazurefunctionprodsa
       FunctionApp: goazurefunctionprodfa
+      CosmosAccount: goazurefunctionprodcosmos
     steps:
     - uses: azure/login@v1
       with:
@@ -108,11 +117,12 @@ jobs:
     - run: az group create --location $Location --name $ResourceGroup
     - run: az storage account create --name $StorageAccount --location $Location --resource-group $ResourceGroup --sku Standard_LRS
     - run: az functionapp create --name $FunctionApp --storage-account $StorageAccount --consumption-plan-location $Location --resource-group $ResourceGroup --functions-version 4 --os-type Linux --assign-identity --https-only true --runtime custom
+    - run: az cosmosdb create --kind GlobalDocumentDB --locations regionName=$Location failoverPriority=0 isZoneRedundant=False --resource-group $ResourceGroup --name $CosmosAccount --capabilities EnableServerless --backup-policy-type Continuous
     - uses: actions/download-artifact@v3
     - uses: Azure/functions-action@v1
       with:
         app-name: ${{ env.FunctionApp }}
         package: artifact
-    - run: wget https://$FunctionApp.azurewebsites.net/api/HttpExample?name=GitHub
+    - run: wget --method POST https://$FunctionApp.azurewebsites.net/api/HttpExample?name=GitHub
     - run: az logout
       if: ${{ always() }}
