@@ -62,8 +62,8 @@ jobs:
     - run: az cosmosdb create --kind GlobalDocumentDB --locations regionName=$Location failoverPriority=0 isZoneRedundant=False --resource-group $ResourceGroup --name $CosmosAccount --capabilities EnableServerless --backup-policy-type Continuous
     - run: az cosmosdb sql database create --account-name $CosmosAccount --name $CosmosDatabase --resource-group $ResourceGroup
     - run: az cosmosdb sql container create --account-name $CosmosAccount --database-name $CosmosDatabase --name $CosmosCollection --partition-key-path "/id" --resource-group $ResourceGroup
-    - run: az cosmosdb sql role assignment create --account-name $CosmosAccount --resource-group $ResourceGroup --scope "/" --role-definition-name "Cosmos DB Built-in Data Contributor" --principal-id $(az functionapp identity show --name $FunctionApp --resource-group $ResourceGroup --query principalId)
     - run: az functionapp config appsettings set --name $FunctionApp --resource-group $ResourceGroup --settings "CosmosDBConnection__accountEndpoint=https://$CosmosAccount.documents.azure.com:443" --query "[name]"
+    - run: az cosmosdb sql role assignment create --account-name $CosmosAccount --resource-group $ResourceGroup --scope "/" --role-definition-name "Cosmos DB Built-in Data Contributor" --principal-id $(az functionapp identity show --name $FunctionApp --resource-group $ResourceGroup --query principalId)
     #- run: az functionapp config appsettings set --name $FunctionApp --resource-group $ResourceGroup --settings "CosmosDBConnectionString=$(az cosmosdb keys list --type connection-strings --name $CosmosAccount --resource-group $ResourceGroup --query connectionStrings[0].connectionString --output tsv)" --query "[name]"
     - uses: actions/download-artifact@v3
     - uses: Azure/functions-action@v1
@@ -121,8 +121,8 @@ jobs:
     - run: az cosmosdb create --kind GlobalDocumentDB --locations regionName=$Location failoverPriority=0 isZoneRedundant=False --resource-group $ResourceGroup --name $CosmosAccount --capabilities EnableServerless --backup-policy-type Continuous
     - run: az cosmosdb sql database create --account-name $CosmosAccount --name $CosmosDatabase --resource-group $ResourceGroup
     - run: az cosmosdb sql container create --account-name $CosmosAccount --database-name $CosmosDatabase --name $CosmosCollection --partition-key-path "/id" --resource-group $ResourceGroup
-    - run: az cosmosdb sql role assignment create --account-name $CosmosAccount --resource-group $ResourceGroup --scope "/" --role-definition-name "Cosmos DB Built-in Data Contributor" --principal-id $(az functionapp identity show --name $FunctionApp --resource-group $ResourceGroup --query principalId)
     - run: az functionapp config appsettings set --name $FunctionApp --resource-group $ResourceGroup --settings "CosmosDBConnection__accountEndpoint=https://$CosmosAccount.documents.azure.com:443" --query "[name]"
+    - run: az cosmosdb sql role assignment create --account-name $CosmosAccount --resource-group $ResourceGroup --scope "/" --role-definition-name "Cosmos DB Built-in Data Contributor" --principal-id $(az functionapp identity show --name $FunctionApp --resource-group $ResourceGroup --query principalId)
     #- run: az functionapp config appsettings set --name $FunctionApp --resource-group $ResourceGroup --settings "CosmosDBConnectionString=$(az cosmosdb keys list --type connection-strings --name $CosmosAccount --resource-group $ResourceGroup --query connectionStrings[0].connectionString --output tsv)" --query "[name]"
     - uses: actions/download-artifact@v3
     - uses: Azure/functions-action@v1
