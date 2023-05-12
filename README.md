@@ -9,6 +9,19 @@ The Github Actions workflow contains this functionality:
 
 The function writes a document to Cosmos DB using an output binding.
 
+```mermaid
+sequenceDiagram
+    participant HTTP client
+    participant Functions host
+    participant Function
+    participant Cosmos DB
+    HTTP client->>Functions host: POST with any body
+    Functions host->>Function: POST with InvokeRequest JSON body
+    Function-->>Functions host: Return InvokeResponse JSON body
+    Functions host->>Cosmos DB: Write document
+    Functions host-->>HTTP client: Return response
+```
+
 Many things are probably needed before using this in production, such as:
 * authentication (if needed)
 * use of Application Gateway or Front Door instead of direct access to the function
