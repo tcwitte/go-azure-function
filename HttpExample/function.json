@@ -17,8 +17,8 @@
       "type": "cosmosDB",
       "direction": "out",
       "databaseName": "mydatabase",
-			"collectionName": "mycollection",
-      "connectionStringSetting": "CosmosDBConnectionString"      
+			"containerName": "mycollection",
+      "leaseConnection": "CosmosDBConnectionString"      
     }
 ]
 }
