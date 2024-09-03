@@ -65,7 +65,7 @@ jobs:
     - run: az cosmosdb sql container create --account-name $CosmosAccount --database-name $CosmosDatabase --name $CosmosCollection --partition-key-path "/id" --resource-group $ResourceGroup
     #- run: az cosmosdb sql role assignment create --account-name $CosmosAccount --resource-group $ResourceGroup --scope "/" --role-definition-name "Contributor" --principal-id $(az functionapp identity show --name $FunctionApp --resource-group $ResourceGroup --query principalId)
     - run: az functionapp config appsettings set --name $FunctionApp --resource-group $ResourceGroup --settings "CosmosDBConnectionString=$(az cosmosdb keys list --type connection-strings --name $CosmosAccount --resource-group $ResourceGroup --query connectionStrings[0].connectionString --output tsv)" --query "[name]"
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4.1.7
     - uses: Azure/functions-action@v1
       with:
         app-name: ${{ env.FunctionApp }}
@@ -123,7 +123,7 @@ jobs:
     - run: az cosmosdb sql container create --account-name $CosmosAccount --database-name $CosmosDatabase --name $CosmosCollection --partition-key-path "/id" --resource-group $ResourceGroup
     #- run: az cosmosdb sql role assignment create --account-name $CosmosAccount --resource-group $ResourceGroup --scope "/" --role-definition-name "Contributor" --principal-id $(az functionapp identity show --name $FunctionApp --resource-group $ResourceGroup --query principalId)
     - run: az functionapp config appsettings set --name $FunctionApp --resource-group $ResourceGroup --settings "CosmosDBConnectionString=$(az cosmosdb keys list --type connection-strings --name $CosmosAccount --resource-group $ResourceGroup --query connectionStrings[0].connectionString --output tsv)" --query "[name]"
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4.1.7
     - uses: Azure/functions-action@v1
       with:
         app-name: ${{ env.FunctionApp }}
